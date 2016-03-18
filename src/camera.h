@@ -87,7 +87,9 @@ class Camera {
 
   // Field of view aspect ratio, clipping planes.
   double hFov, vFov, ar, nClip, fClip;
-
+	
+	double halfTanHFov, halfTanVFov;
+	
   // Current position and target point (the point the camera is looking at).
   Vector3D pos, targetPos;
 

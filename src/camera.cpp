@@ -30,6 +30,10 @@ void Camera::configure(const CameraInfo& info, size_t screenW, size_t screenH) {
     vFov = 2 * degrees(atan(tan(radians(hFov) / 2) / ar));
   }
   screenDist = ((double) screenH) / (2.0 * tan(radians(vFov) / 2));
+	
+	//pre-compute tangent values
+	halfTanHFov = tan(radians(hFov) * 0.5f);
+	halfTanVFov = tan(radians(vFov) * 0.5f);
 }
 
 void Camera::place(const Vector3D& targetPos, const double phi,
@@ -62,6 +66,10 @@ void Camera::set_screen_size(const size_t screenW, const size_t screenH) {
   ar = 1.0 * screenW / screenH;
   hFov = 2 * degrees(atan(((double) screenW) / (2 * screenDist)));
   vFov = 2 * degrees(atan(((double) screenH) / (2 * screenDist)));
+	
+	//pre-compute tangent values
+	halfTanHFov = tan(radians(hFov) * 0.5f);
+	halfTanVFov = tan(radians(vFov) * 0.5f);
 }
 
 void Camera::move_by(const double dx, const double dy, const double d) {
@@ -114,8 +122,14 @@ Ray Camera::generate_ray(double x, double y) const {
   // TODO:
   // compute position of the input sensor sample coordinate on the
   // canonical sensor plane one unit away from the pinhole.
+	
+	Vector3D end{2* x - 1, -2 * y + 1, -1};
+	//scale based on fov
+	end.x *= halfTanHFov;
+	end.y *= halfTanVFov;
+	end.normalize();
 
-  return Ray(Vector3D(0, 0, 0), Vector3D(0, 0, 1));
+	return Ray(pos, std::move(c2w * end));
 }
 
 
