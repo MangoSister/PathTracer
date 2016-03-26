@@ -100,8 +100,8 @@ class Application : public Renderer {
   void set_up_pathtracer();
 
   DynamicScene::Scene *scene;
-  PathTracer* pathtracer;
-
+	PathTracer* pathtracer;
+	
   // View Frustrum Variables.
   // On resize, the aspect ratio is changed. On reset_camera, the position and
   // orientation are reset but NOT the aspect ratio.

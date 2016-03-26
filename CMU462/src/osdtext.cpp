@@ -36,8 +36,8 @@ OSDText::~OSDText() {
   delete face;
 
   lines.clear();
-
-  glDeleteProgram(program);
+	if(program != GL_ZERO)
+		glDeleteProgram(program);
 }
 
 int OSDText::init(bool use_hdpi) {

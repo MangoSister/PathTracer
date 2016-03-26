@@ -20,7 +20,7 @@ namespace CMU462 {
 
 Application::Application(AppConfig config) {
 
-  pathtracer = new PathTracer (
+	pathtracer = new PathTracer (
     config.pathtracer_ns_aa,
     config.pathtracer_max_ray_depth,
     config.pathtracer_ns_area_light,
@@ -29,14 +29,12 @@ Application::Application(AppConfig config) {
     config.pathtracer_ns_refr,
     config.pathtracer_num_threads,
     config.pathtracer_envmap
-  );
+														 );
 
 }
 
 Application::~Application() {
-
-  delete pathtracer;
-
+	delete pathtracer;
 }
 
 void Application::init() {
