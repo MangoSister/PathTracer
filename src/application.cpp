@@ -29,12 +29,17 @@ Application::Application(AppConfig config) {
     config.pathtracer_ns_refr,
     config.pathtracer_num_threads,
     config.pathtracer_envmap
-														 );
+															 );
 
 }
 
 Application::~Application() {
-	delete pathtracer;
+
+	if(pathtracer != nullptr)
+	{
+		delete pathtracer;
+		pathtracer = nullptr;
+	}
 }
 
 void Application::init() {

@@ -122,13 +122,13 @@ Ray Camera::generate_ray(double x, double y) const {
   // TODO:
   // compute position of the input sensor sample coordinate on the
   // canonical sensor plane one unit away from the pinhole.
-	
-	Vector3D end{2* x - 1, -2 * y + 1, -1};
+//	x = 0.5; y = 0.5;
+	Vector3D end{2 * x - 1, 2 * y - 1, -1};
 	//scale based on fov
 	end.x *= halfTanHFov;
 	end.y *= halfTanVFov;
 	end.normalize();
-
+	
 	return Ray(pos, std::move(c2w * end));
 }
 

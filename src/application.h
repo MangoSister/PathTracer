@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <memory>
 
 // libCMU462
 #include "CMU462/CMU462.h"

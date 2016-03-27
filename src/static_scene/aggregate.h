@@ -37,7 +37,7 @@ class Aggregate : public Primitive {
    * return the null pointer for aggregates. 
    */
   BSDF* get_bsdf() const { return NULL; }
-
+	
 };
 
 

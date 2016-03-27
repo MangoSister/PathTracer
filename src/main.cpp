@@ -113,16 +113,16 @@ int main( int argc, char** argv ) {
   Viewer viewer = Viewer();
 
   // create application
-  Application app (config);
-
+  Application* app  = new Application(config);
+	
   // set renderer
-  viewer.set_renderer(&app);
+  viewer.set_renderer(app);
 
   // init viewer
   viewer.init();
 
   // load scene
-  app.load(sceneInfo);
+  app->load(sceneInfo);
 
 
   delete sceneInfo;
@@ -137,8 +137,7 @@ int main( int argc, char** argv ) {
   // apparently the meshEdit renderer instance was not destroyed properly
   // not sure if this is due to the recent refactor but if anyone got some
   // free time, check the destructor for Application.
-  exit(EXIT_SUCCESS); // shamelessly faking it
-
+  //exit(EXIT_SUCCESS); // shamelessly faking it
   return 0;
 
 }
