@@ -94,10 +94,10 @@ BVHAccel::BVHAccel(const std::vector<Primitive *> &_primitives,
 		curr->l = new BVHNode(best_partition.first, curr->start, best_pm.first.size());
 		curr->r = new BVHNode(best_partition.second, curr->start + best_pm.first.size(), best_pm.second.size());
 		
-		if(curr->l->range > 4)
+		if(curr->l->range > max_leaf_size)
 			node_stack.push(curr->l);
 		
-		if(curr->r->range > 4)
+		if(curr->r->range > max_leaf_size)
 			node_stack.push(curr->r);
 	}
 }
@@ -166,7 +166,11 @@ bool BVHAccel::intersect(const Ray &ray) const {
 			for(size_t i = curr_node->start, end = curr_node->start + curr_node->range; i < end; ++i)
 			{
 				if(primitives[i]->intersect(ray))
+				{
+//					primitives[i]->intersect(ray);
 					return true;
+				}
+
 			}
 		}
 		else
