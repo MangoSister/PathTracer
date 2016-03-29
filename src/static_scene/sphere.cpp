@@ -36,15 +36,9 @@ bool Sphere::intersect(const Ray& r) const {
   // TODO:
   // Implement ray - sphere intersection.
   // Note that you might want to use the the Sphere::test helper here.
-	
-	double a = 1;
-	Vector3D origin_offset = r.o - this->o;
-	double b = 2 * dot(origin_offset, r.d);
-	double c = (origin_offset).norm2() - r2;
-	double delta = b*b - 4*a*c;
-	if(delta < 0)
-		return false;
-	else return true;
+	double t1{}, t2{};
+	return test(r, t1, t2) && r.min_t < t2 && r.max_t > t1 &&
+	!(r.min_t > t1 && r.max_t < t2);
 
 }
 
