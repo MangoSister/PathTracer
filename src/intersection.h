@@ -19,7 +19,7 @@ class Primitive;
  */
 struct Intersection {
 
-  Intersection() : t (INF_D), primitive(NULL), bsdf(NULL) { }
+  Intersection() : t (INF_D), primitive(NULL), bsdf(NULL), is_back_hit(false) { }
 
   double t;    ///< time of intersection
 
@@ -28,7 +28,8 @@ struct Intersection {
   Vector3D n;  ///< normal at point of intersection
 
   BSDF* bsdf; ///< BSDF of the surface at point of intersection
-
+	
+	bool is_back_hit;
   // More to follow.
 };
 

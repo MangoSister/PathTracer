@@ -70,7 +70,8 @@ namespace CMU462 { namespace StaticScene {
    * Draw outline with OpenGL (for visualizer)
    */
   void drawOutline(const Color& c) const;
-
+	 
+	Vector3D get_face_normal() const;
  private:
 
   const Mesh* mesh;   ///< pointer to the mesh the triangle is a part of
@@ -78,7 +79,9 @@ namespace CMU462 { namespace StaticScene {
   size_t v1; ///< index into the mesh attribute arrays
   size_t v2; ///< index into the mesh attribute arrays
   size_t v3; ///< index into the mesh attribute arrays
-
+	 
+	Vector3D face_normal;
+	 
 }; // class Triangle
 
 } // namespace StaticScene

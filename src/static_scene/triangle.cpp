@@ -6,7 +6,14 @@
 namespace CMU462 { namespace StaticScene {
 
 Triangle::Triangle(const Mesh* mesh, size_t v1, size_t v2, size_t v3) :
-    mesh(mesh), v1(v1), v2(v2), v3(v3) { }
+    mesh(mesh), v1(v1), v2(v2), v3(v3)
+	{
+		const Vector3D& vt1 = mesh->positions[v1];
+		const Vector3D& vt2 = mesh->positions[v2];
+		const Vector3D& vt3 = mesh->positions[v3];
+		
+		face_normal = cross(vt1 - vt2, vt1 - vt3).unit();
+	}
 
 BBox Triangle::get_bbox() const {
   
@@ -44,7 +51,8 @@ bool Triangle::intersect(const Ray& r) const {
 	(p1_p0.x * ( _d.z * p2_p0.y - p2_p0.z * _d.y ) -
 	 p1_p0.y * ( _d.z * p2_p0.x - p2_p0.z * _d.x ) +
 	 p1_p0.z * ( _d.y * p2_p0.x - p2_p0.y * _d.x ));
-	
+	if(std::isinf(inv_det))
+		return false;
 	//early exit #1
 	Vector3D inv_A_3 =
 	{ p2_p0.z * p1_p0.y - p1_p0.z * p2_p0.y,
@@ -106,7 +114,8 @@ bool Triangle::intersect(const Ray& r, Intersection *isect) const {
 	(p1_p0.x * ( _d.z * p2_p0.y - p2_p0.z * _d.y ) -
 	 p1_p0.y * ( _d.z * p2_p0.x - p2_p0.z * _d.x ) +
 	 p1_p0.z * ( _d.y * p2_p0.x - p2_p0.y * _d.x ));
-	
+	if(std::isinf(inv_det))
+		return false;
 	//early exit #1
 	Vector3D inv_A_3 =
 	{ p2_p0.z * p1_p0.y - p1_p0.z * p2_p0.y,
@@ -143,11 +152,20 @@ bool Triangle::intersect(const Ray& r, Intersection *isect) const {
 	mesh->normals[v1] * (1 - u - v) +
 	mesh->normals[v2] * u +
 	mesh->normals[v3] * v;
+	isect->n.normalize();
 	//back face issue
-	if(dot(r.o - p0, isect->n) > 0)
+	
+	if(dot(-r.d * t, face_normal) < 0)
+	{
 		isect->n *= -1;
+		isect->is_back_hit = true;
+	}
+	else
+		isect->is_back_hit = false;
+	
 	isect->primitive = this;
 	isect->bsdf = mesh->get_bsdf();
+	
 	return true;
 }
 
