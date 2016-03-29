@@ -495,21 +495,12 @@ class Vertex : public HalfedgeElement {
 
     // Iterate over neighbors.
     HalfedgeCIter h = halfedge();
-    if (isBoundary()) {
-      do {
-         Vector3D pj = h->next()->vertex()->position;
-         Vector3D pk = h->next()->next()->vertex()->position;
-         normal += cross( pj-pi, pk-pi );
-         h = h->next()->twin();
-      } while( h != halfedge() );      
-    } else {
-      do {
-         Vector3D pj = h->next()->vertex()->position;
-         Vector3D pk = h->next()->next()->vertex()->position;
-         normal += cross( pj-pi, pk-pi );
-         h = h->twin()->next();
-      } while( h != halfedge() );
-    }
+		do {
+			Vector3D pj = h->next()->vertex()->position;
+			Vector3D pk = h->next()->next()->vertex()->position;
+			normal += cross( pj-pi, pk-pi );
+			h = h->twin()->next();
+		} while( h != halfedge() );
 
     normal.normalize();
   }
