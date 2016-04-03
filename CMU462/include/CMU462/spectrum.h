@@ -85,6 +85,13 @@ class Spectrum {
     return 0.2126f * r + 0.7152f * g + 0.0722f * b;
   }
 
+	inline void saturate()
+	{
+		r = std::min(std::max(r, 0.0f), 1.0f);
+		g = std::min(std::max(g, 0.0f), 1.0f);
+		b = std::min(std::max(b, 0.0f), 1.0f);
+	}
+	
   static Spectrum fromColor(const Color &c) {
     return Spectrum(c.a * c.r, c.a * c.g, c.a * c.b);
   }

@@ -67,7 +67,7 @@ HDRImageBuffer* load_exr(const char* file_path) {
 }
 
 int main( int argc, char** argv ) {
-
+	
   // get the options
   AppConfig config; int opt;
   while ( (opt = getopt(argc, argv, "s:l:t:m:e:h")) != -1 ) {  // for each option...

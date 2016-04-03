@@ -30,11 +30,9 @@ bool Triangle::intersect(const Ray& r) const {
   
   // TODO: implement ray-triangle intersection
 	// TODO: extract common subexpressions!!!
-	
 	const Vector3D& p0 = mesh->positions[v1];
 	Vector3D p1_p0 = mesh->positions[v2] - p0;
 	Vector3D p2_p0 = mesh->positions[v3] - p0;
-	const Vector3D& _d = - r.d;
 	Vector3D o_p0 = r.o - p0;
 	//closed form of inv of A: [p1_p0, p2_p0, _d]
 	//x = [u, v, t]^T
@@ -47,39 +45,27 @@ bool Triangle::intersect(const Ray& r) const {
 	//det: a11(a33 * a22 - a32 * a23) -
 	//		a21(a33 * a12 - a32 * a13) +
 	//		a31(a23 * a12 - a22 * a13)
-	double inv_det = 1 /
-	(p1_p0.x * ( _d.z * p2_p0.y - p2_p0.z * _d.y ) -
-	 p1_p0.y * ( _d.z * p2_p0.x - p2_p0.z * _d.x ) +
-	 p1_p0.z * ( _d.y * p2_p0.x - p2_p0.y * _d.x ));
+	
+	Vector3D cross_d_e2 = cross(r.d, p2_p0);
+	
+	double inv_det = 1 / dot(p1_p0, cross_d_e2);
 	if(std::isinf(inv_det))
 		return false;
+	
+	Vector3D cross_s_e1 = cross(o_p0, p1_p0);
+	
 	//early exit #1
-	Vector3D inv_A_3 =
-	{ p2_p0.z * p1_p0.y - p1_p0.z * p2_p0.y,
-		p1_p0.z * p2_p0.x - p1_p0.x * p2_p0.z,
-		p2_p0.y * p1_p0.x - p1_p0.y * p2_p0.x };
-	inv_A_3 *= inv_det;
-	double t = dot(inv_A_3, o_p0);
+	double t = dot(cross_s_e1, p2_p0) * inv_det;
 	if(t < r.min_t || t > r.max_t)
 		return false;
 	
 	//early exit #2
-	Vector3D inv_A_1 =
-	{ _d.z * p2_p0.y - p2_p0.z * _d.y,
-		p2_p0.z * _d.x - _d.z * p2_p0.x,
-		_d.y * p2_p0.x - p2_p0.y * _d.x };
-	inv_A_1 *= inv_det;
-	double u = dot(inv_A_1, o_p0);
+	double u = dot(cross_d_e2, o_p0) * inv_det;
 	if(u > 1 || u < 0)
 		return false;
 	
 	//(exit #3)
-	Vector3D inv_A_2 =
-	{ p1_p0.z * _d.y - _d.z * p1_p0.y,
-		_d.z * p1_p0.x - p1_p0.z * _d.x,
-		p1_p0.y * _d.x - _d.y * p1_p0.x };
-	inv_A_2 *= inv_det;
-	double v = dot(inv_A_2, o_p0);
+	double v = dot(cross_s_e1, r.d) * inv_det;
 	if(v < 0 || u + v > 1)
 		return false;
 	
@@ -97,7 +83,6 @@ bool Triangle::intersect(const Ray& r, Intersection *isect) const {
 	const Vector3D& p0 = mesh->positions[v1];
 	Vector3D p1_p0 = mesh->positions[v2] - p0;
 	Vector3D p2_p0 = mesh->positions[v3] - p0;
-	const Vector3D& _d = - r.d;
 	Vector3D o_p0 = r.o - p0;
 	//closed form of inv of A: [p1_p0, p2_p0, _d]
 	//x = [u, v, t]^T
@@ -110,39 +95,27 @@ bool Triangle::intersect(const Ray& r, Intersection *isect) const {
 	//det: a11(a33 * a22 - a32 * a23) -
 	//		a21(a33 * a12 - a32 * a13) +
 	//		a31(a23 * a12 - a22 * a13)
-	double inv_det = 1 /
-	(p1_p0.x * ( _d.z * p2_p0.y - p2_p0.z * _d.y ) -
-	 p1_p0.y * ( _d.z * p2_p0.x - p2_p0.z * _d.x ) +
-	 p1_p0.z * ( _d.y * p2_p0.x - p2_p0.y * _d.x ));
+	
+	Vector3D cross_d_e2 = cross(r.d, p2_p0);
+	
+	double inv_det = 1 / dot(p1_p0, cross_d_e2);
 	if(std::isinf(inv_det))
 		return false;
+	
+	Vector3D cross_s_e1 = cross(o_p0, p1_p0);
+
 	//early exit #1
-	Vector3D inv_A_3 =
-	{ p2_p0.z * p1_p0.y - p1_p0.z * p2_p0.y,
-		p1_p0.z * p2_p0.x - p1_p0.x * p2_p0.z,
-		p2_p0.y * p1_p0.x - p1_p0.y * p2_p0.x };
-	inv_A_3 *= inv_det;
-	double t = dot(inv_A_3, o_p0);
+	double t = dot(cross_s_e1, p2_p0) * inv_det;
 	if(t < r.min_t || t > r.max_t)
 		return false;
 	
 	//early exit #2
-	Vector3D inv_A_1 =
-	{ _d.z * p2_p0.y - p2_p0.z * _d.y,
-		p2_p0.z * _d.x - _d.z * p2_p0.x,
-		_d.y * p2_p0.x - p2_p0.y * _d.x };
-	inv_A_1 *= inv_det;
-	double u = dot(inv_A_1, o_p0);
+	double u = dot(cross_d_e2, o_p0) * inv_det;
 	if(u > 1 || u < 0)
 		return false;
 	
 	//(exit #3)
-	Vector3D inv_A_2 =
-	{ p1_p0.z * _d.y - _d.z * p1_p0.y,
-		_d.z * p1_p0.x - p1_p0.z * _d.x,
-		p1_p0.y * _d.x - _d.y * p1_p0.x };
-	inv_A_2 *= inv_det;
-	double v = dot(inv_A_2, o_p0);
+	double v = dot(cross_s_e1, r.d) * inv_det;
 	if(v < 0 || u + v > 1)
 		return false;
 	
@@ -153,6 +126,9 @@ bool Triangle::intersect(const Ray& r, Intersection *isect) const {
 	mesh->normals[v2] * u +
 	mesh->normals[v3] * v;
 	isect->n.normalize();
+	if(dot(isect->n,face_normal) < 0)
+		isect->n *= -1;
+
 	//back face issue
 	
 	if(dot(-r.d * t, face_normal) < 0)

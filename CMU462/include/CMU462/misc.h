@@ -8,6 +8,7 @@
 namespace CMU462 {
 
 #define PI (3.14159265358979323)
+#define INV_PI (0.31830988618)
 #define EPS_D (0.00000000001)
 #define EPS_F (0.00001f)
 #define INF_D (std::numeric_limits<double>::infinity())
