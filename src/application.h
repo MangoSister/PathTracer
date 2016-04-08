@@ -53,7 +53,8 @@ struct AppConfig {
 
     pathtracer_num_threads = 1;
     pathtracer_envmap = NULL;
-
+		
+		halton_grid_sampling = false;
   }
 
   size_t pathtracer_ns_aa;
@@ -63,6 +64,7 @@ struct AppConfig {
   size_t pathtracer_ns_glsy;
   size_t pathtracer_ns_refr;
   size_t pathtracer_num_threads;
+	bool halton_grid_sampling;
   HDRImageBuffer* pathtracer_envmap;
 
 };

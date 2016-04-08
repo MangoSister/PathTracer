@@ -82,6 +82,21 @@ class CosineWeightedHemisphereSampler3D : public Sampler3D {
  * Jittered sampler implementations
  */
 
+class HaltonSampler2D : public Sampler2D
+{
+private:
+	mutable size_t base2;
+	mutable size_t base3;
+	mutable Vector2D curr;
+	
+public:
+	
+	Vector2D get_sample() const;
+	HaltonSampler2D() : Sampler2D(), base2(0), base3(0) { }
+	~HaltonSampler2D() { }
+	void reset();
+};
+
 } // namespace CMU462
 
 #endif //CMU462_SAMPLER_H

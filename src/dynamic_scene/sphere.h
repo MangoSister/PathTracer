@@ -37,8 +37,8 @@ class Sphere : public SceneObject {
 
  private:
 
+	Vector3D p;
   double r;
-  Vector3D p;
   BSDF* bsdf;
   DrawStyle *style;
 

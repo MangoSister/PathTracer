@@ -61,6 +61,7 @@ class PathTracer {
              size_t max_ray_depth = 4, size_t ns_area_light = 1,
              size_t ns_diff = 1, size_t ns_glsy = 1, size_t ns_refr = 1,
              size_t num_threads = 1,
+						 bool halton = false,
              HDRImageBuffer* envmap = NULL);
 
   /**
@@ -169,13 +170,13 @@ class PathTracer {
   /**
    * Trace a camera ray given by the pixel coordinate.
    */
-  Spectrum raytrace_pixel(size_t x, size_t y);
+  Spectrum raytrace_pixel(size_t x, size_t y, const Sampler2D* grid_sampler);
 
   /**
    * Raytrace a tile of the scene and update the frame buffer. Is run
    * in a worker thread.
    */
-  void raytrace_tile(int tile_x, int tile_y, int tile_w, int tile_h);
+  void raytrace_tile(int tile_x, int tile_y, int tile_w, int tile_h, const Sampler2D* grid_sampler);
 
   /**
    * Implementation of a ray tracer worker thread
@@ -225,8 +226,10 @@ class PathTracer {
 
   BVHAccel* bvh;                 ///< BVH accelerator aggregate
   EnvironmentLight *envLight;    ///< environment map
-  Sampler2D* gridSampler;        ///< samples unit grid
-  Sampler3D* hemisphereSampler;  ///< samples unit hemisphere
+	
+	bool halton_grid_sampling;
+//  Sampler2D* gridSampler;        ///< samples unit grid
+//  Sampler3D* hemisphereSampler;  ///< samples unit hemisphere
   HDRImageBuffer sampleBuffer;   ///< sample buffer
   ImageBuffer frameBuffer;       ///< frame buffer
   Timer timer;                   ///< performance test timer

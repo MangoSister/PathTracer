@@ -11,13 +11,14 @@ namespace CMU462 {
 
 
 struct Ray {
-  size_t depth;  ///< depth of the Ray
+	
 
   Vector3D o;  ///< origin
   Vector3D d;  ///< direction
   mutable double min_t; ///< treat the ray as a segment (ray "begin" at max_t)
   mutable double max_t; ///< treat the ray as a segment (ray "ends" at max_t)
-
+	size_t depth;  ///< depth of the Ray
+	
   Vector3D inv_d;  ///< component wise inverse
   int sign[3];     ///< fast ray-bbox intersection
 
@@ -44,14 +45,27 @@ struct Ray {
    * \param max_t max t value for the ray (if it's actually a segment)
    * \param depth depth of the ray
    */
-    Ray(const Vector3D& o, const Vector3D& d, double max_t, int depth = 0)
+    Ray(const Vector3D& o, const Vector3D& d, double max_t, int depth)
         : o(o), d(d), min_t(0.0), max_t(max_t), depth(depth) {
     inv_d = Vector3D(1 / d.x, 1 / d.y, 1 / d.z);
     sign[0] = (inv_d.x < 0);
     sign[1] = (inv_d.y < 0);
     sign[2] = (inv_d.z < 0);
   }
+	
+	Ray(const Ray& other)
+	{
+		depth = other.depth;
+		o = other.o;
+		d = other.d;
+		min_t = other.min_t;
+		max_t = other.max_t;
+		inv_d = other.inv_d;
+		sign[0] = other.sign[0];
+		sign[1] = other.sign[1];
+		sign[2] = other.sign[2];
 
+	}
 
   /**
    * Returns the point t * |d| along the ray.

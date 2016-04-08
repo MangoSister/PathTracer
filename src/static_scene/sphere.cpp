@@ -57,6 +57,15 @@ bool Sphere::intersect(const Ray& ray, Intersection *i) const {
 		i->n = normal(ray.at_time(i->t));
 		i->primitive = this;
 		i->bsdf = get_bsdf();
+		
+		if(ray.min_t > t1 && ray.min_t < t2)
+		{
+			i->is_back_hit = true;
+//			i->n *= -1;
+		}
+		else
+			i->is_back_hit = false;
+		
 		return true;
 	}
 	else return false;

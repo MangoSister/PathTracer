@@ -58,7 +58,6 @@ void Mesh::render_in_opengl() const {
 }
 
 void Mesh::draw_faces() const {
-
   for (FaceCIter f = mesh.facesBegin(); f != mesh.facesEnd(); f++) {
 
     // Prevent z fighting (faces bleeding into edges and points).
@@ -70,7 +69,7 @@ void Mesh::draw_faces() const {
       glDisable(GL_LIGHTING);
       style->style_face();
     }
-
+		
     glBegin(GL_POLYGON);
     Vector3D normal(f->normal());
     glNormal3dv(&normal.x);

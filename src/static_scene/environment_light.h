@@ -4,6 +4,7 @@
 #include "../sampler.h"
 #include "../image.h"
 #include "scene.h"
+#include <memory>
 
 namespace CMU462 { namespace StaticScene {
 
@@ -41,11 +42,15 @@ class EnvironmentLight : public SceneLight {
    *   environment map horizontally? What about vertically?).
    */
   Spectrum sample_dir(const Ray& r) const;
+	Spectrum sample_dir(double theta, double phi) const;
 
  private:
   const HDRImageBuffer* envMap;
+	std::vector<double> margin_cmf;
+	std::vector<double> cond_cmf;
+	std::vector<double> assoc_pmf;
 }; // class EnvironmentLight
-
+	
 } // namespace StaticScene
 } // namespace CMU462
 

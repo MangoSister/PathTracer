@@ -93,17 +93,21 @@ class BSDF {
    * scattered.
    */
   virtual bool is_delta() const = 0;
-
+	
+	virtual bool consider_back_face() const = 0;
+	
   /**
    * Reflection helper
    */
   virtual void reflect(const Vector3D& wo, Vector3D* wi);
 
+	virtual Vector3D reflect(const Vector3D& wi);
   /**
    * Refraction helper
    */
   virtual bool refract(const Vector3D& wo, Vector3D* wi, float ior);
-
+	virtual bool refract(const Vector3D& wo, Vector3D* wi, float ior, double& fr);
+	virtual double compute_fr(const Vector3D& wo, float ior);
 }; // class BSDF
 
 /**
@@ -118,7 +122,8 @@ class DiffuseBSDF : public BSDF {
   Spectrum sample_f(const Vector3D& wo, Vector3D* wi, float* pdf);
   Spectrum get_emission() const { return Spectrum(); }
   bool is_delta() const { return false; }
-
+	bool consider_back_face() const { return false; }
+	
 private:
 
   Spectrum albedo;
@@ -138,7 +143,8 @@ class MirrorBSDF : public BSDF {
   Spectrum sample_f(const Vector3D& wo, Vector3D* wi, float* pdf);
   Spectrum get_emission() const { return Spectrum(); }
   bool is_delta() const { return true; }
-
+	bool consider_back_face() const { return false; }
+	
 private:
 
   float roughness;
@@ -181,12 +187,15 @@ class RefractionBSDF : public BSDF {
   Spectrum sample_f(const Vector3D& wo, Vector3D* wi, float* pdf);
   Spectrum get_emission() const { return Spectrum(); }
   bool is_delta() const { return true; }
-
+	bool consider_back_face() const { return true; }
+	
  private:
 
-  float ior;
-  float roughness;
-  Spectrum transmittance;
+	Spectrum transmittance;
+	float roughness;
+	float ior;
+
+
 
 }; // class RefractionBSDF
 
@@ -199,19 +208,23 @@ class GlassBSDF : public BSDF {
   GlassBSDF(const Spectrum& transmittance, const Spectrum& reflectance,
             float roughness, float ior) :
     transmittance(transmittance), reflectance(reflectance),
-    roughness(roughness), ior(ior) { }
+    roughness(roughness), ior(1 / ior) { }
 
   Spectrum f(const Vector3D& wo, const Vector3D& wi);
   Spectrum sample_f(const Vector3D& wo, Vector3D* wi, float* pdf);
   Spectrum get_emission() const { return Spectrum(); }
   bool is_delta() const { return true; }
-
+	bool consider_back_face() const { return true; }
+	
  private:
 
-  float ior;
-  float roughness;
-  Spectrum reflectance;
-  Spectrum transmittance;
+	Spectrum transmittance;
+	Spectrum reflectance;
+	float roughness;
+	float ior; //change to ratio of refractive index: 1( / n_glass)
+
+ 
+
 
 }; // class GlassBSDF
 
@@ -227,7 +240,8 @@ class EmissionBSDF : public BSDF {
   Spectrum sample_f(const Vector3D& wo, Vector3D* wi, float* pdf);
   Spectrum get_emission() const { return radiance; }
   bool is_delta() const { return false; }
-
+	bool consider_back_face() const { return false; }
+	
  private:
 
   Spectrum radiance;

@@ -133,7 +133,7 @@ bool Triangle::intersect(const Ray& r, Intersection *isect) const {
 	
 	if(dot(-r.d * t, face_normal) < 0)
 	{
-		isect->n *= -1;
+//		isect->n *= -1;
 		isect->is_back_hit = true;
 	}
 	else

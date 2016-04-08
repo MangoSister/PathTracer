@@ -18,8 +18,8 @@ namespace CMU462 {
  */
 struct BBox {
 
-  Vector3D max;	    ///< min corner of the bounding box
-  Vector3D min;	    ///< max corner of the bounding box
+	Vector3D min;	    ///< max corner of the bounding box
+  Vector3D max;	    ///< min corner of the bounding box	
   Vector3D extent;  ///< extent of the bounding box (min -> max)
 
   /**

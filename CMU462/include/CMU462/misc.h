@@ -7,6 +7,8 @@
 
 namespace CMU462 {
 
+#define INV_3 (0.3333333333)
+#define INV_5 (0.2)
 #define PI (3.14159265358979323)
 #define INV_PI (0.31830988618)
 #define EPS_D (0.00000000001)

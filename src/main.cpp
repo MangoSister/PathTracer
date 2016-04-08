@@ -58,16 +58,15 @@ HDRImageBuffer* load_exr(const char* file_path) {
   float* channel_g = (float*) exr.images[1];
   float* channel_b = (float*) exr.images[0];
   for (size_t i = 0; i < exr.width * exr.height; i++) {
-    envmap->data[i] = Spectrum(channel_r[i], 
-                               channel_g[i], 
-                               channel_b[i]);
+		envmap->data[i] = Spectrum(channel_r[i] < 0 ? 0 : channel_r[i],
+															 channel_g[i] < 0 ? 0 : channel_g[i],
+															 channel_b[i] < 0 ? 0 : channel_b[i]);
   }
 
   return envmap;
 }
 
 int main( int argc, char** argv ) {
-	
   // get the options
   AppConfig config; int opt;
   while ( (opt = getopt(argc, argv, "s:l:t:m:e:h")) != -1 ) {  // for each option...
@@ -86,6 +85,8 @@ int main( int argc, char** argv ) {
         break;
     case 'e':
         config.pathtracer_envmap = load_exr(optarg);
+		case 'h':
+				config.halton_grid_sampling = true;
         break;
     default:
         usage(argv[0]);
