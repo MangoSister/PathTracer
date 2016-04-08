@@ -484,8 +484,8 @@ Spectrum PathTracer::trace_ray(const Ray &r)
 				// in the scene, instead of just the dummy light we provided in part 1.
 				for(auto light : scene->lights)
 				{
-					if(!dynamic_cast<EnvironmentLight*>(light))
-						continue;
+//					if(!dynamic_cast<EnvironmentLight*>(light))
+//						continue;
 					Vector3D dir_to_light{};
 					float dist_to_light{};
 					float pdf{};
@@ -524,8 +524,8 @@ Spectrum PathTracer::trace_ray(const Ray &r)
 						// Construct a shadow ray and compute whether the intersected surface is
 						// in shadow and accumulate reflected radiance
 						Ray shadow_ray{hit_p /*+ 0 * hit_n*/, dir_to_light};
-						shadow_ray.min_t = 10e-5;
-						shadow_ray.max_t = dist_to_light - 10e-5;
+						shadow_ray.minmax_t[0] = 10e-5;
+						shadow_ray.minmax_t[1] = dist_to_light - 10e-5;
 						if(!bvh->intersect(shadow_ray))
 						{
 
@@ -567,7 +567,7 @@ Spectrum PathTracer::trace_ray(const Ray &r)
 //					first_glass = true;
 				
 				curr_ray = Ray{hit_p, o2w * indirect_w_in, curr_ray.depth};
-				curr_ray.min_t = 10e-5;
+				curr_ray.minmax_t[0] = 10e-5;
 				curr_ray.depth--;
 				transmit_factor *= f /* * cos_indirect_win*/ * (1 / (dir_pdf * (1 - termination)));
 			}

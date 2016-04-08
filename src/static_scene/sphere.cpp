@@ -37,8 +37,8 @@ bool Sphere::intersect(const Ray& ray) const {
   // Implement ray - sphere intersection.
   // Note that you might want to use the the Sphere::test helper here.
 	double t1{}, t2{};
-	return test(ray, t1, t2) && ray.min_t < t2 && ray.max_t > t1 &&
-	!(ray.min_t > t1 && ray.max_t < t2);
+	return test(ray, t1, t2) && ray.minmax_t[0] < t2 && ray.minmax_t[1] > t1 &&
+	!(ray.minmax_t[0] > t1 && ray.minmax_t[1] < t2);
 
 }
 
@@ -50,15 +50,15 @@ bool Sphere::intersect(const Ray& ray, Intersection *i) const {
   // When an intersection takes place, the Intersection data should be updated
   // correspondingly.
 	double t1{}, t2{};
-	if(test(ray, t1, t2) && ray.min_t < t2 && ray.max_t > t1 &&
-		 !(ray.min_t > t1 && ray.max_t < t2))
+	if(test(ray, t1, t2) && ray.minmax_t[0] < t2 && ray.minmax_t[1] > t1 &&
+		 !(ray.minmax_t[0] > t1 && ray.minmax_t[1] < t2))
 	{
-		i->t = t1 >= ray.min_t ? t1 : t2;
+		i->t = t1 >= ray.minmax_t[0] ? t1 : t2;
 		i->n = normal(ray.at_time(i->t));
 		i->primitive = this;
 		i->bsdf = get_bsdf();
 		
-		if(ray.min_t > t1 && ray.min_t < t2)
+		if(ray.minmax_t[0] > t1 && ray.minmax_t[0] < t2)
 		{
 			i->is_back_hit = true;
 //			i->n *= -1;

@@ -15,8 +15,9 @@ struct Ray {
 
   Vector3D o;  ///< origin
   Vector3D d;  ///< direction
-  mutable double min_t; ///< treat the ray as a segment (ray "begin" at max_t)
-  mutable double max_t; ///< treat the ray as a segment (ray "ends" at max_t)
+	mutable double minmax_t[2] {0, INF_D};
+//  mutable double min_t; ///< treat the ray as a segment (ray "begin" at max_t)
+//  mutable double max_t; ///< treat the ray as a segment (ray "ends" at max_t)
 	size_t depth;  ///< depth of the Ray
 	
   Vector3D inv_d;  ///< component wise inverse
@@ -30,7 +31,10 @@ struct Ray {
    * \param depth depth of the ray
    */
     Ray(const Vector3D& o, const Vector3D& d, int depth = 0)
-        : o(o), d(d), min_t(0.0), max_t(INF_D), depth(depth) {
+        : o(o), d(d), depth(depth) {
+					
+		minmax_t[0] = 0;
+		minmax_t[1] = INF_D;
     inv_d = Vector3D(1 / d.x, 1 / d.y, 1 / d.z);
     sign[0] = (inv_d.x < 0);
     sign[1] = (inv_d.y < 0);
@@ -46,7 +50,10 @@ struct Ray {
    * \param depth depth of the ray
    */
     Ray(const Vector3D& o, const Vector3D& d, double max_t, int depth)
-        : o(o), d(d), min_t(0.0), max_t(max_t), depth(depth) {
+        : o(o), d(d), depth(depth) {
+		
+		minmax_t[0] = 0;
+		minmax_t[1] = INF_D;
     inv_d = Vector3D(1 / d.x, 1 / d.y, 1 / d.z);
     sign[0] = (inv_d.x < 0);
     sign[1] = (inv_d.y < 0);
@@ -58,8 +65,8 @@ struct Ray {
 		depth = other.depth;
 		o = other.o;
 		d = other.d;
-		min_t = other.min_t;
-		max_t = other.max_t;
+		minmax_t[0] = other.minmax_t[0];
+		minmax_t[1] = other.minmax_t[1];
 		inv_d = other.inv_d;
 		sign[0] = other.sign[0];
 		sign[1] = other.sign[1];

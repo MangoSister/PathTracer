@@ -46,8 +46,8 @@ BVHAccel::BVHAccel(const std::vector<Primitive *> &_primitives,
 		{
 			for(size_t bkt = 1; bkt < bucket_size; ++bkt)
 			{
-				double split_line = bb_curr.min[dim] +
-				(static_cast<double>(bkt) /static_cast<double>(bucket_size)) * (bb_curr.max[dim] - bb_curr.min[dim]);
+				double split_line = bb_curr.bounds[0][dim] +
+				(static_cast<double>(bkt) /static_cast<double>(bucket_size)) * (bb_curr.bounds[1][dim] - bb_curr.bounds[0][dim]);
 				
 				BBox left{}, right{};
 				std::vector<Primitive*> left_pm{}, right_pm{};
