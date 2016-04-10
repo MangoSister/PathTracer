@@ -25,9 +25,9 @@ namespace CMU462
 				for(size_t y = 0; y < envMap->h; ++y)
 				{
 					double illum = envMap->data[x + y * envMap->w].illum();
-					double sin_theta = std::sin( ((double)y + 0.5) / (double)envMap->h * PI);
-					//flux ~ L * sin(theta)
-					double weight = illum * sin_theta;
+//					double sin_theta = std::sin( ((double)y + 0.5) / (double)envMap->h * PI);
+					//flux ~ L * sin(theta), however, save it because it will get divided by (sin_theda * d_theta * d_phi) later
+					double weight = illum; // * sin_theta;
 					cond_cmf[x + y * envMap->w] = weight;
 					inv_sum_weight += weight;
 				}
@@ -99,7 +99,7 @@ namespace CMU462
 			//1. inversion method to get theta
 			double xi1 = (double)std::rand() / (double)RAND_MAX;
 			auto it = std::lower_bound(margin_cmf.cbegin(), margin_cmf.cend(), xi1, std::less<float>());
-			row = std::distance(margin_cmf.begin(), it);
+			row = std::min((size_t)std::distance(margin_cmf.begin(), it), (size_t)(envMap->w - 1));
 			theta =  ((double)(row) + 0.5) / double(envMap->h) * PI;
 			
 			//2. inversion method to get phi
@@ -107,14 +107,16 @@ namespace CMU462
 			it = std::lower_bound(cond_cmf.cbegin() + row * envMap->w,
 														cond_cmf.cbegin() + (row + 1) * envMap->w,
 														xi2, std::less<float>());
-			col = std::distance(cond_cmf.cbegin() + row * envMap->w, it);
-			phi = ((double)(row) + 0.5) / double(envMap->h) * 2 * PI;
+			col = std::min((size_t)std::distance(cond_cmf.cbegin() + row * envMap->w, it), (size_t)(envMap->h - 1));
+			phi = ((double)(col) + 0.5) / double(envMap->w) * 2 * PI;
 			
 			double sin_theta = std::sin(theta);
 			(*wi).x = sin_theta * std::sin(phi);
 			(*wi).z = sin_theta * std::cos(phi);
 			(*wi).y = std::cos(theta);
+
 			*pdf = assoc_pmf[col + row * envMap->w] * ((double)envMap->h * INV_PI) * ((double)envMap->w * 0.5 * INV_PI);
+
 			*distToLight = INF_F;
 
 			return sample_dir(theta, phi);
@@ -125,14 +127,16 @@ namespace CMU462
 			int x0{}, x1{}, y0{}, y1{};
 			float t0{}, t1{};
 			x0 = static_cast<int>(std::floor(phi - 0.5));
-			t0 = phi - x0;
-			x0 = x0 % envMap->w;
-			x1 = (x0 + 1) % envMap->w;
+			t0 = phi - 0.5 - x0;
+			if(x0 < 0)
+				x0 += static_cast<int>(envMap->w);
+			x1 = (x0 + 1) % static_cast<int>(envMap->w);
 			
 			y0 = static_cast<int>(std::floor(theta - 0.5));
-			t1 = theta - y0;
-			y0 = y0 % envMap->h;
-			y1 = (y0 + 1) % envMap->h;
+			t1 = theta - 0.5 - y0;
+			if(y0 < 0)
+				y0 += static_cast<int>(envMap->h);
+			y1 = (y0 + 1) % static_cast<int>(envMap->h);
 			
 			Spectrum s00 = envMap->data[x0 + y0 * envMap->w];
 			Spectrum s01 = envMap->data[x0 + y1 * envMap->w];
@@ -141,7 +145,7 @@ namespace CMU462
 			
 			Spectrum result = (s00 * (1 - t0) + s10 * t0) * (1 - t1) +
 			(s01 * (1 - t0) + s11 * t0) * t1;
-			
+						
 			return result;
 
 		}
@@ -149,9 +153,9 @@ namespace CMU462
 		Spectrum EnvironmentLight::sample_dir(const Ray& r) const
 		{
 			// TODO: Implement
-			double theta = acos(r.d.y); // from 0 - pi
+			double theta = acos(std::min(std::max(r.d.y, -1.0), 1.0)); // from 0 - pi
 			double sin_theta = sqrt(1 - r.d.y * r.d.y); //Edge case: sin_theta equals to 0
-			double phi = acos(r.d.z / sin_theta); // from 0 - 2*pi
+			double phi = acos(std::min(std::max(r.d.z / sin_theta, -1.0), 1.0)); // from 0 - 2*pi
 			if(r.d.x < 0)
 				phi = 2 * PI - phi;
 			
@@ -178,7 +182,7 @@ namespace CMU462
 			
 			Spectrum result = (s00 * (1 - t0) + s10 * t0) * (1 - t1) +
 												(s01 * (1 - t0) + s11 * t0) * t1;
-	
+			
 			return result;
 		}
 

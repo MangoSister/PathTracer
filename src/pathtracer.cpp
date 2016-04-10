@@ -40,7 +40,7 @@ PathTracer::PathTracer(size_t ns_aa,
 	this->halton_grid_sampling = halton;
 	
   if (envmap) {
-    this->envLight = new EnvironmentLight(envmap);
+		this->envLight = new EnvironmentLight(envmap);
   } else {
     this->envLight = NULL;
   }
@@ -401,29 +401,11 @@ void PathTracer::key_press(int key) {
 
 Spectrum PathTracer::trace_ray(const Ray &r)
 {
-//	GlassBSDF g_bsdf{ {1,1,1}, {1,1,1}, 1, 1.45 };
-////	Vector3D test_wo{0.3535, 0.3535, 0.866};
-////	Vector3D test_wo{0.6123, 0.6123, 0.5};
-//	Vector3D test_wo{0.7035, 0.7035, 0.5};
-//	test_wo.normalize();
-//	
-//	Vector3D test_wi{0, 0, 1};
-//	test_wi.normalize();
-//	
-//	float test_pdf;
-//	Spectrum test_result{};
-//	
-//	srand(1);
-//	double fr = g_bsdf.compute_fr(test_wo, 1 / 1.45);
-//	test_result = g_bsdf.f(test_wo, test_wi);
-//	test_result = g_bsdf.sample_f(test_wo, &test_wi, &test_pdf);
-	
 	Ray curr_ray{r};
-//	Ray curr_ray{{-0.8, 0.1, -0.8}, {-1, 0, 0}, 1};
 
 	Spectrum transmit_factor{1,1,1};
 	Spectrum L_out{};
-//	bool first_glass = false;
+
 	while(curr_ray.depth > 0)
 	{
 		Spectrum curr_L_out{};
@@ -484,8 +466,8 @@ Spectrum PathTracer::trace_ray(const Ray &r)
 				// in the scene, instead of just the dummy light we provided in part 1.
 				for(auto light : scene->lights)
 				{
-//					if(!dynamic_cast<EnvironmentLight*>(light))
-//						continue;
+					if(!dynamic_cast<EnvironmentLight*>(light))
+						continue;
 					Vector3D dir_to_light{};
 					float dist_to_light{};
 					float pdf{};
@@ -498,24 +480,16 @@ Spectrum PathTracer::trace_ray(const Ray &r)
 					double scale = 1.0 / num_light_samples;
 					for (int i=0; i<num_light_samples; i++)
 					{
-//						if(first_glass && curr_ray.depth == max_ray_depth - 1 && dynamic_cast<EmissionBSDF*>(isect.bsdf))
-//						{
-//							std::cout<<"wa"<<std::endl;
-//						}
-						
 						// returns a vector 'dir_to_light' that is a direction from
 						// point hit_p to the point on the light source.  It also returns
 						// the distance from point x to this point on the light source.
 						// (pdf is the probability of randomly selecting the random
 						// sample point on the light source -- more on this in part 2)
 						Spectrum light_L = light->sample_L(hit_p, &dir_to_light, &dist_to_light, &pdf);
-						
+
 						// convert direction into coordinate space of the surface, where
 						// the surface normal is [0 0 1]
 						Vector3D w_in = w2o * dir_to_light;
-						
-	
-						
 						
 						// evaluate surface bsdf
 						Spectrum f = isect.bsdf->f(w_out, w_in);
@@ -528,23 +502,15 @@ Spectrum PathTracer::trace_ray(const Ray &r)
 						shadow_ray.minmax_t[1] = dist_to_light - 10e-5;
 						if(!bvh->intersect(shadow_ray))
 						{
-
-							
 							L_out_perlight += (f * light_L /** cos_theta*/) * (1 / pdf);
 						}
-//						else
-//						{
-//							Intersection is;
-//							bool f = bvh->intersect(shadow_ray, &is);
-//							return {0.5f, 0, 0.5f};
-//						}
-
 					}
 					L_out_perlight *= scale;
 					curr_L_out += L_out_perlight;
 				}
 			
 				L_out += (transmit_factor * curr_L_out);
+
 				// TODO:
 				// Compute an indirect lighting estimate using pathtracing with Monte Carlo.
 				// Note that Ray objects have a depth field now; you should use this to avoid

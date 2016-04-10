@@ -1,0 +1,48 @@
+Computer Graphics 15662 Assignment 3 Pathtracer
+Yang Zhou
+Apr 8, 2016
+I would like use grace day to delay the submission.
+
+Extra credit:
+1. Halton sequence sampling: I implemented Halton sequence sampling in 2D grid
+[0, 1) x [0, 1). Pass the additional '-m' param to use it for generating pixel
+ray. See sampler.cpp for details. Because generating halton sequence need to
+store internal variables, it is thread unsafe to share one sampler across
+multiple threads. Therefore, I remove the gridsampler inpathtracer.cpp, but
+create a sampler in each thread function. However, there seems to be no visually
+obvious difference....at least to me.
+
+Images:
+Both images are rendered with 64 pixel samples, 64 light samples, and 5 bounces.
+See img folder for details.
+
+Other issues:
+1. Ray-aabb intersection optimization: I slightly changed the sturcture of BBox
+in order to perform branchless ray-aabb interection. instead of min and max
+variable, I used a length 2 array bounds[2]. The method was inspired from this
+paper [1].
+
+2. I also implemented cosine-weighted hemisphere sampling. See sampler.cpp for
+details.
+
+3. As I mentioned on Piazza, the radiance of the emissive material in Cornnel
+Box is (10, 10, 10), which seems to be out of range. This leads to a noisy image
+with a lot of pure white pixels (larger than (1,1,1)). I regard this as a bug,
+and fix it by saturating the radiance to (1,1,1)
+
+4. I experienced some errors when importing an environment map. For example,
+when importing uffizi.exr, the spectrum components of some pixels are zero or
+(slightly) negative. I clamped those pixels to a small value larger than 0 because
+inversion method requires non-zero probability mass function.
+
+5. It turns out that the "Viewer" is not released properly. This is because its
+deconstructor tries to delete app, which is not assigned by new operator (in
+main.cpp). It can be simply fixed by one-line change:
+
+(Before:) Application app(config);
+(After:) Application* app = new Application(config);
+
+
+Reference:
+[1] Williams, Amy, et al. "An efficient and robust ray-box intersection
+algorithm." ACM SIGGRAPH 2005 Courses. ACM, 2005.
