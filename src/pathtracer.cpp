@@ -466,8 +466,6 @@ Spectrum PathTracer::trace_ray(const Ray &r)
 				// in the scene, instead of just the dummy light we provided in part 1.
 				for(auto light : scene->lights)
 				{
-					if(!dynamic_cast<EnvironmentLight*>(light))
-						continue;
 					Vector3D dir_to_light{};
 					float dist_to_light{};
 					float pdf{};

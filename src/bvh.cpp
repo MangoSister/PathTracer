@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stack>
 #include <queue>
+#include <utility>
 
 using namespace std;
 
@@ -86,9 +87,9 @@ BVHAccel::BVHAccel(const std::vector<Primitive *> &_primitives,
 		
 		//do partition
 		//re-order the primitive (partially)
-		primitives.erase(primitives.cbegin() + curr->start, primitives.cbegin() + curr->start + curr->range);
-		primitives.insert(primitives.cbegin() + curr->start, best_pm.first.begin(), best_pm.first.end());
-		primitives.insert(primitives.cbegin() + curr->start + best_pm.first.size(), best_pm.second.begin(), best_pm.second.end());
+		primitives.erase(primitives.begin() + curr->start, primitives.begin() + curr->start + curr->range);
+		primitives.insert(primitives.begin() + curr->start, best_pm.first.begin(), best_pm.first.end());
+		primitives.insert(primitives.begin() + curr->start + best_pm.first.size(), best_pm.second.begin(), best_pm.second.end());
 		
 		//assign children node
 		curr->l = new BVHNode(best_partition.first, curr->start, best_pm.first.size());

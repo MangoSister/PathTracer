@@ -30,7 +30,7 @@ struct Ray {
    * \param d direction of the ray
    * \param depth depth of the ray
    */
-    Ray(const Vector3D& o, const Vector3D& d, int depth = 0)
+    Ray(const Vector3D& o, const Vector3D& d, size_t depth = 0)
         : o(o), d(d), depth(depth) {
 					
 		minmax_t[0] = 0;
