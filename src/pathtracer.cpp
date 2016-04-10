@@ -519,8 +519,9 @@ Spectrum PathTracer::trace_ray(const Ray &r)
 				Spectrum f = isect.bsdf->sample_f(w_out, &indirect_w_in, &dir_pdf);
 
 //				float termination = f.illum() > 0.25f ? 0.0f : 0.5f;
-//				float termination = 1 - f.illum();
-				float termination = 0.0;
+				float termination = 1 - f.illum();
+				termination = clamp(termination, 0, 1);
+//				float termination = 0.0;
 				//Russian Roulette
 				if(((double)(std::rand()) / RAND_MAX) < termination)
 					break;
