@@ -113,39 +113,4 @@ void HaltonSampler2D::reset()
 	curr.y = 0;
 	return;
 }
-
-	
-void PlaneHalton(float *result, int n, int p1, int p2)
-{
-	/*float p, u, v, ip1, ip2;*/
-	int /*k, kk, pos,*/ a;
-	for (int k = 0, pos = 0 ; k < n ; k++)
-	{
-		float u = 0;
-		float ip1 = 1.0 / p1;
-		
-		float p{};
-		int kk{};
-		for (p = ip1, kk = k ; kk != 0 ; p *= ip1, kk /= p1)
-//		for (p = 0.5, kk = k ; kk ; p *= 0.5, kk >>= 1)
-		{
-//			if (kk & 1) // kk mod 2 == 1
-			if ((a = kk % p1)) // kk mod 2 == 1
-				u += a * p;
-		}
-		
-		float v = 0;
-		float ip2 = 1.0 / p2; // inverse of p2
-		
-		for (p = ip2, kk = k ; kk != 0 ; p *= ip2, kk /= p2) // kk = (int)(kk/p2)
-		{
-			if ((a = kk % p2))
-				v += a * p;
-		}
-		
-		result[pos++] = u;
-		result[pos++] = v;
-	}
-}
-	
 } // namespace CMU462

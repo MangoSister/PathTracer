@@ -500,7 +500,7 @@ Spectrum PathTracer::trace_ray(const Ray &r)
 						shadow_ray.minmax_t[1] = dist_to_light - 10e-5;
 						if(!bvh->intersect(shadow_ray))
 						{
-							L_out_perlight += (f * light_L /** cos_theta*/) * (1 / pdf);
+							L_out_perlight += (f * light_L) * (1 / pdf);
 						}
 					}
 					L_out_perlight *= scale;
@@ -521,20 +521,15 @@ Spectrum PathTracer::trace_ray(const Ray &r)
 //				float termination = f.illum() > 0.25f ? 0.0f : 0.5f;
 				float termination = 1 - f.illum();
 				termination = clamp(termination, 0, 1);
-//				float termination = 0.0;
+
 				//Russian Roulette
 				if(((double)(std::rand()) / RAND_MAX) < termination)
 					break;
 				
-//				double cos_indirect_win = std::max(0.0, indirect_w_in[2]);
-				
-//				if(curr_ray.depth == max_ray_depth && dynamic_cast<GlassBSDF*>(isect.bsdf))
-//					first_glass = true;
-				
 				curr_ray = Ray{hit_p, o2w * indirect_w_in, curr_ray.depth};
 				curr_ray.minmax_t[0] = 10e-5;
 				curr_ray.depth--;
-				transmit_factor *= f /* * cos_indirect_win*/ * (1 / (dir_pdf * (1 - termination)));
+				transmit_factor *= f * (1 / (dir_pdf * (1 - termination)));
 			}
 		
 		}
@@ -563,11 +558,6 @@ Spectrum PathTracer::raytrace_pixel(size_t x, size_t y, const Sampler2D* grid_sa
 		sample.x *= inv_w;
 		sample.y *= inv_h;
 		
-		//DEBUG
-//		if(x == 0 && y == 1200)
-//		{
-//			std::cout<<"wagh"<<std::endl;
-//		}
 		Ray cam_ray = camera->generate_ray(sample.x, sample.y);
 		cam_ray.depth = max_ray_depth;
 		output += trace_ray(cam_ray);
