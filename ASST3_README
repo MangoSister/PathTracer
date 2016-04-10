@@ -14,7 +14,7 @@ obvious difference....at least to me.
 
 Images:
 Both images are rendered with 64 pixel samples, 64 light samples, and 5 bounces.
-See img folder for details.
+I disabled Russian Roulette for better image quality. See img folder for details.
 
 Other issues:
 1. Ray-aabb intersection optimization: I slightly changed the sturcture of BBox
